@@ -3,6 +3,7 @@ package com.example.ftpspringboot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,22 @@ public class FtpController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to download file: " + e.getMessage());
         }
+    }
+
+    @DeleteMapping("/delete-file")
+    public ResponseEntity<String> deleteFile(@RequestParam("remoteFilePath") String remoteFilePath) {
+
+        try {
+
+            // remoteFilePath = /uploads/hello.png
+            ftpService.deleteFile(remoteFilePath);
+
+            return ResponseEntity.status(HttpStatus.OK).body("File deleted successfully.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete file: " + e.getMessage());
+        }
+
     }
 
 

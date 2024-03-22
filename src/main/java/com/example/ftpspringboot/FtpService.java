@@ -84,6 +84,22 @@ public class FtpService {
         }
     }
 
+    public void deleteFile( String remoteFilePath) throws IOException {
+        FTPClient ftpClient = configureFtpClient();
+        try {
+            boolean result = ftpClient.deleteFile(remoteFilePath);
+            if (!result) {
+                throw new IOException("Could not delete the file on the FTP server.");
+            }
+        } finally {
+            if (ftpClient.isConnected()) {
+                ftpClient.logout();
+                ftpClient.disconnect();
+            }
+        }
+
+    }
+
 
 
 
