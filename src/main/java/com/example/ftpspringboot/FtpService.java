@@ -1,6 +1,7 @@
 package com.example.ftpspringboot;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,25 @@ public class FtpService {
         ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
         return ftpClient;
     }
+
+    public void uploadFile(InputStream inputStream, String uploadPath) throws IOException {
+        FTPClient ftpClient = configureFtpClient();
+        try {
+            boolean result = ftpClient.storeFile(uploadPath, inputStream);
+            if (!result) {
+                throw new IOException("Could not upload the file to the FTP server.");
+            }
+        } finally {
+            // ensure FTPClient is disconnected
+            if (ftpClient.isConnected()) {
+                ftpClient.logout();
+                ftpClient.disconnect();
+            }
+        }
+
+    }
+
+
 
 
 }
