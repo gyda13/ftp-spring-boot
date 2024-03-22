@@ -29,4 +29,17 @@ public class FtpController {
 
     }
 
+    @PostMapping("/download-file")
+    public ResponseEntity<?> downloadFile(@RequestParam("remoteFilePath") String remoteFilePath,
+                                          @RequestParam("localPath") String localPath) {
+        try {
+            // remoteFilePath = /uploads/hello.png , localPath = /Users/gydaalmohaimeed/Documents/hi.png
+            ftpService.downloadFile(remoteFilePath, localPath);
+            return ResponseEntity.status(HttpStatus.OK).body("File downloaded successfully to " + localPath);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to download file: " + e.getMessage());
+        }
+    }
+
+
 }

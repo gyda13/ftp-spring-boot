@@ -1,9 +1,14 @@
 package com.example.ftpspringboot;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +56,32 @@ public class FtpService {
             }
         }
 
+    }
+
+    public void downloadFile(String remoteFilePath, String localPath) throws IOException {
+        FTPClient ftpClient = configureFtpClient();
+        try {
+            // verify successful connection
+            if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
+                throw new IOException("Could not connect to FTP server.");
+            }
+
+
+            // convert the localPath string to a Path object and normalize it to remove any redundant or potentially malicious path elements
+            Path localFilePath = Paths.get(localPath).normalize();
+
+            try (OutputStream outputStream = new FileOutputStream(localFilePath.toFile())) {
+                boolean result = ftpClient.retrieveFile(remoteFilePath, outputStream);
+                if (!result) {
+                    throw new IOException("Failed to download file: " + remoteFilePath);
+                }
+            }
+        } finally {
+            if (ftpClient.isConnected()) {
+                ftpClient.logout();
+                ftpClient.disconnect();
+            }
+        }
     }
 
 
