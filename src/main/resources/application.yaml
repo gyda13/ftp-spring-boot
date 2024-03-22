@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ftp-spring-boot
+
+ftp:
+  host: localhost
+  port: 21
+  username: myuser
+  password: mypass
